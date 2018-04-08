@@ -1,0 +1,112 @@
+﻿@model HU.Models.MainPage
+
+@{
+    ViewBag.Title = "Аккаунт";
+}
+
+<h2>Аккаунт</h2>
+
+@if (Model.Person.Role.Level == 1)
+{
+    <a href="/Cashier/">Войти в панель кассира</a><br />
+}
+else if (Model.Person.Role.Level == 2)
+{
+    <a href="/Admin/">Войти в панель админа</a><br/>
+}
+    <a href="/Home/Logout">Выйти</a>
+
+@using (Html.BeginForm("Get", "Home"))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <div class="control-label col-md-2">
+            Выберите На какую дату вывести счет
+        </div>
+        <div class="col-md-10">
+            <select name="Date">
+                @foreach (var a in HU.Logic.Info.contextHelper.GetServicesByPerson(Model.Person).Select(x => x.Date).Distinct())
+                {
+                    <option value=@a.ToString()>@a.ToString()</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Вывести" class="btn btn-default" />
+        </div>
+    </div>
+}
+<br />
+@if (Model.Services != null)
+{
+    <h2>Расчет</h2>
+    <table class="table">
+        <tr>
+            <th>
+                Номер
+            </th>
+            <th>
+                Дата
+            </th>
+            <th>
+                Адрес
+            </th>
+            <th>
+                Услуга
+            </th>
+            <th>
+                Тип расчета
+            </th>
+            <th>
+                Кол-во
+            </th>
+            <th>
+                Итого:
+            </th>
+            <th>
+                Оплачено
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.Services)
+        {
+            var Fact = HU.Logic.Info.DB.PayementFacts.Get.FirstOrDefault(x => x.Service == item && x.Person == Model.Person);
+            bool FactA = Fact != null && Fact.Paid;
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Flat.Adress)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Info.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Info.paymentType.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Count)
+                </td>
+                <td>
+                    @Math.Round(HU.Logic.Info.Calculator.Get(item, Model.Person), 2)
+                </td>
+                <td>
+                    @(FactA ? "Да" : "Нет")
+                </td>
+            </tr>
+        }
+
+    </table>
+    <br />
+
+
+}

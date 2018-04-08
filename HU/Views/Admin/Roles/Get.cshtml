@@ -1,0 +1,39 @@
+﻿@model IEnumerable<HU.Models.Role>
+
+@{
+    ViewBag.Title = "Роли";
+}
+
+<h2>Роли</h2>
+<a href="/Admin">Вернуться в Админ. панель</a><br /><br />
+<p>
+    @Html.ActionLink("Создать", "CreateRole")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Level)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Level)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.ActionLink("Редактировать", "Role", new { id = item.Id }) |
+                @Html.ActionLink("Удалить", "DeleteRole", new { id = item.Id })
+            </td>
+        </tr>
+    }
+
+</table>

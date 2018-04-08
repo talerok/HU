@@ -1,0 +1,32 @@
+﻿@model IEnumerable<HU.Models.Flat>
+
+@{
+    ViewBag.Title = "Квартиры";
+}
+
+<h2>Квартиры</h2>
+<a href="/Admin">Вернуться в Админ. панель</a><br/><br/>
+<p>
+    @Html.ActionLink("Создать", "CreateFlat")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Adress)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Adress)
+        </td>
+        <td>
+            @Html.ActionLink("Редкатировать", "Flat", new { id=item.Id }) |
+            @Html.ActionLink("Удалить", "DeleteFlat", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>

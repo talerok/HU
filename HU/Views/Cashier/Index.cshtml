@@ -1,0 +1,114 @@
+﻿@model HU.Models.ServicePage
+
+@{
+    ViewBag.Title = "Информация по услуге";
+}
+
+    <h2>Информация по услуге</h2>
+    <div class="form-horizontal">
+        @using (Html.BeginForm("Get", "Cashier"))
+        {
+
+
+            <div class="form-group">
+                <div class="col-md-10">
+                    @Html.DropDownList("personId", new SelectList(HU.Logic.Info.DB.People.Get, "Id", "Name"))
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input name="serviceId" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input type="submit" value="Загрузить" class="btn btn-default" />
+                </div>
+            </div>
+            }
+    </div>
+    <br />
+    @if (Model != null && Model.Service != null)
+    {
+        var Fact = HU.Logic.Info.DB.PayementFacts.Get.FirstOrDefault(x => x.Service == Model.Service && x.Person == Model.Person);
+        bool FactA = Fact != null && Fact.Paid;
+        <h2>Услуга</h2>
+        <table class="table">
+            <tr>
+                <th>
+                    Номер
+                </th>
+                <th>
+                    Дата
+                </th>
+                <th>
+                    Адрес
+                </th>
+                <th>
+                    Услуга
+                </th>
+                <th>
+                    Тип расчета
+                </th>
+                <th>
+                    Кол-во
+                </th>
+                <th>
+                    Итого:
+                </th>
+                <th>
+                    Оплачено
+                </th>
+                <th>
+
+                </th>
+            </tr>
+
+
+            <tr>
+                <td>
+                    @Model.Service.Id
+                </td>
+                <td>
+                    @Model.Service.Date
+                </td>
+                <td>
+                    @Model.Service.Flat.Adress
+                </td>
+                <td>
+                    @Model.Service.Info.Name
+                </td>
+                <td>
+                    @Model.Service.Info.paymentType.Name
+                </td>
+                <td>
+                    @Model.Service.Count
+                </td>
+                <td>
+                    @Math.Round(HU.Logic.Info.Calculator.Get(Model.Service, Model.Person), 2)
+                </td>
+                <td>
+                    @(FactA ? "Да" : "Нет")
+                </td>
+                @if (!FactA)
+                {
+                    <td>
+                        @using (Html.BeginForm("Accept", "Cashier"))
+                        {
+                            <input name="personId" type="hidden" value=@Model.Person.Id />
+                            <input name="serviceId" type="hidden" value=@Model.Service.Id />
+                            
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Потвердить" class="btn btn-default" />
+                                </div>
+                            </div>
+                        }
+                    </td>
+                }
+            </tr>
+
+        </table>
+    }
